@@ -62,7 +62,12 @@ def parse_key_value_pairs(kv_string: str | None) -> dict[str, str]:
                 key, value = pair.split("=", 1)
                 result[key.strip()] = value.strip()
             else:
-                logging.warning(f"Skipping malformed key-value pair: {pair}")
+                # Avoid logging full pair contents, which may include sensitive data.
+                key_part = pair.split("=", 1)[0].strip() if pair else ""
+                if key_part:
+                    logging.warning("Skipping malformed key-value pair for key '%s'", key_part)
+                else:
+                    logging.warning("Skipping malformed key-value pair with empty key")
     return result
 
 
