@@ -57,17 +57,15 @@ def parse_key_value_pairs(kv_string: str | None) -> dict[str, str]:
     """Parse key-value pairs from a comma-separated KEY=VALUE string."""
     result = {}
     if kv_string:
-        for pair in kv_string.split(","):
+        for index, pair in enumerate(kv_string.split(",")):
             if "=" in pair:
                 key, value = pair.split("=", 1)
                 result[key.strip()] = value.strip()
             else:
-                # Avoid logging full pair contents, which may include sensitive data.
-                key_part = pair.split("=", 1)[0].strip() if pair else ""
-                if key_part:
-                    logging.warning("Skipping malformed key-value pair for key '%s'", key_part)
-                else:
-                    logging.warning("Skipping malformed key-value pair with empty key")
+                # Avoid logging any part of the user-provided pair, which may include sensitive data.
+                logging.warning(
+                    "Skipping malformed key-value pair at position %d", index
+                )
     return result
 
 
